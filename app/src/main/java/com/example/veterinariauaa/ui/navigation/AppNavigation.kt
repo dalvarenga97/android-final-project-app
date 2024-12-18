@@ -21,17 +21,21 @@ fun AppNavigation(
     citaRepository: CitaRepository,
     servicioRepository: ServicioRepository
 ) {
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "home") {
         composable("login") { LoginScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("mascotas") { MascotasScreen(navController, mascotaRepository) }
         composable("citas") {
-            // Observamos el flujo de mascotas
             val listaMascotas by mascotaRepository.getMascotas().collectAsState(initial = emptyList())
+            val listaServicios by servicioRepository.getServicios().collectAsState(initial = emptyList())
 
-            // Pasamos la lista de mascotas a CitasScreen
-            CitasScreen(citaRepository = citaRepository, listaMascotas = listaMascotas)
+            CitasScreen(
+                citaRepository = citaRepository,
+                listaMascotas = listaMascotas,
+                listaServicios = listaServicios
+            )
         }
+
         composable("servicios") { ServiciosScreen(servicioRepository) }
         composable("perfil") { PerfilScreen(navController)}
         }

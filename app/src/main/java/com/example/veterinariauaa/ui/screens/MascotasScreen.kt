@@ -30,16 +30,6 @@ fun MascotasScreen(navController: NavController, mascotaRepository: MascotaRepos
             style = MaterialTheme.typography.headlineMedium // Usamos Material 3
         )
         Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn {
-            items(mascotas) { mascota ->
-                Text(
-                    text = "${mascota.nombre} - ${mascota.especie} (${mascota.raza})",
-                    style = MaterialTheme.typography.bodyLarge // Usamos Material 3
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
             value = newMascotaName,
@@ -103,5 +93,17 @@ fun MascotasScreen(navController: NavController, mascotaRepository: MascotaRepos
         ) {
             Text("Agregar Mascota")
         }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn {
+            items(mascotas) { mascota ->
+                Text(
+                    text = "${mascota.nombre} - ${mascota.especie} (${mascota.raza})",
+                    style = MaterialTheme.typography.bodyLarge // Usamos Material 3
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

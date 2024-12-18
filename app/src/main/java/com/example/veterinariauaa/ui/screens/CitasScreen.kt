@@ -13,21 +13,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.veterinariauaa.model.Cita
 import com.example.veterinariauaa.model.Mascota
+import com.example.veterinariauaa.model.Servicio
 import com.example.veterinariauaa.repository.CitaRepository
 import java.util.*
-
 
 @Composable
 fun CitasScreen(
     citaRepository: CitaRepository,
-    listaMascotas: List<Mascota> // Lista de mascotas a mostrar
+    listaMascotas: List<Mascota>,
+    listaServicios: List<Servicio> // Lista de servicios
 ) {
     val citas by citaRepository.getCitas().collectAsState(initial = emptyList())
-    var newCitaMotivo by remember { mutableStateOf("") }
     var selectedMascota by remember { mutableStateOf<Mascota?>(null) }
-    var expanded by remember { mutableStateOf(false) } // Controla el menú desplegable
-    var selectedDate by remember { mutableStateOf("") } // Para almacenar la fecha seleccionada
-    val openDatePicker = remember { mutableStateOf(false) } // Controla el diálogo del DatePicker
+    var selectedServicio by remember { mutableStateOf<Servicio?>(null) }
+    var expandedMascota by remember { mutableStateOf(false) }
+    var expandedServicio by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf("") }
+    val openDatePicker = remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -37,7 +39,6 @@ fun CitasScreen(
         val datePickerDialog = DatePickerDialog(
             context,
             { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                // Convertir la fecha seleccionada a formato String
                 selectedDate = "$year-${month + 1}-$dayOfMonth"
                 openDatePicker.value = false
             },
@@ -48,7 +49,6 @@ fun CitasScreen(
         datePickerDialog.show()
     }
 
-    // Mostrar el DatePickerDialog si se ha activado
     if (openDatePicker.value) {
         showDatePickerDialog()
     }
@@ -64,24 +64,11 @@ fun CitasScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Lista de citas
-        LazyColumn {
-            items(citas) { cita ->
-                Text(
-                    text = "Mascota ID: ${cita.mascotaId} - Fecha: ${cita.fecha} - Motivo: ${cita.motivo}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Selector de Mascota usando DropdownMenu
+        // Selector de Mascota
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expanded = true }
+                .clickable { expandedMascota = true }
                 .padding(8.dp)
         ) {
             Text(
@@ -90,8 +77,8 @@ fun CitasScreen(
             )
 
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
+                expanded = expandedMascota,
+                onDismissRequest = { expandedMascota = false },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 listaMascotas.forEach { mascota ->
@@ -99,7 +86,38 @@ fun CitasScreen(
                         text = { Text(mascota.nombre) },
                         onClick = {
                             selectedMascota = mascota
-                            expanded = false
+                            expandedMascota = false
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Selector de Servicio
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expandedServicio = true }
+                .padding(8.dp)
+        ) {
+            Text(
+                text = selectedServicio?.nombre ?: "Selecciona un servicio",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            DropdownMenu(
+                expanded = expandedServicio,
+                onDismissRequest = { expandedServicio = false },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                listaServicios.forEach { servicio ->
+                    DropdownMenuItem(
+                        text = { Text(servicio.nombre) },
+                        onClick = {
+                            selectedServicio = servicio
+                            expandedServicio = false
                         }
                     )
                 }
@@ -123,29 +141,19 @@ fun CitasScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo de motivo de cita
-        TextField(
-            value = newCitaMotivo,
-            onValueChange = { newCitaMotivo = it },
-            label = { Text("Motivo de la nueva cita") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         // Botón para agregar cita
         Button(
             onClick = {
-                if (newCitaMotivo.isNotBlank() && selectedMascota != null && selectedDate.isNotEmpty()) {
+                if (selectedServicio != null && selectedMascota != null && selectedDate.isNotEmpty()) {
                     citaRepository.agregarCita(
                         Cita(
                             id = citas.size + 1,
                             mascotaId = selectedMascota!!.id,
                             fecha = selectedDate,
-                            motivo = newCitaMotivo
+                            motivo = selectedServicio!!.nombre // Usamos el nombre del servicio como motivo
                         )
                     )
-                    newCitaMotivo = ""
+                    selectedServicio = null
                     selectedMascota = null
                     selectedDate = ""
                 }
@@ -153,6 +161,19 @@ fun CitasScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Agregar Cita")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Lista de citas
+        LazyColumn {
+            items(citas) { cita ->
+                Text(
+                    text = "Mascota ID: ${cita.mascotaId} - Fecha: ${cita.fecha} - Motivo: ${cita.motivo}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
 }

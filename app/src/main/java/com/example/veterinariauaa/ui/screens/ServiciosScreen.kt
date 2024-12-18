@@ -28,16 +28,6 @@ fun ServiciosScreen(servicioRepository: ServicioRepository) {
             style = MaterialTheme.typography.headlineMedium // Usamos Material 3
         )
         Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn {
-            items(servicios) { servicio ->
-                Text(
-                    text = "${servicio.nombre} - ${servicio.descripcion} - Precio: ${servicio.precio} GS",
-                    style = MaterialTheme.typography.bodyLarge // Usamos Material 3
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
             value = newServicioName,
@@ -82,5 +72,17 @@ fun ServiciosScreen(servicioRepository: ServicioRepository) {
         ) {
             Text("Agregar Servicio")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn {
+            items(servicios) { servicio ->
+                Text(
+                    text = "${servicio.nombre} - ${servicio.descripcion} - Precio: ${servicio.precio} GS",
+                    style = MaterialTheme.typography.bodyLarge // Usamos Material 3
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
