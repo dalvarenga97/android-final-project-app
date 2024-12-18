@@ -11,7 +11,7 @@ interface AppContainer {
 }
 
 class DefaultAppContainer : AppContainer {
-    private val baseUrl = "http://192.168.155.48:15000/"
+    private val baseUrl = "http://10.0.2.2:15000/"
     
     private val json = Json { 
         ignoreUnknownKeys = true

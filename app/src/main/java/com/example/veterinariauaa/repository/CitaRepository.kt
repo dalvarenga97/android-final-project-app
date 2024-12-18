@@ -12,9 +12,13 @@ class CitaRepository {
         )
     )
 
-    fun getCitas(): Flow<List<Cita>> = citas
+    private val citasFlow = MutableStateFlow<List<Cita>>(emptyList()) // Citas almacenadas en memoria
+
+    fun getCitas(): Flow<List<Cita>> = citasFlow
 
     fun agregarCita(cita: Cita) {
-        citas.value = citas.value + cita
-    }
+        val listaActual = citasFlow.value.toMutableList()
+        listaActual.add(cita)
+        citasFlow.value = listaActual
+        }
 }
