@@ -31,6 +31,7 @@ fun CitasScreen(
     var selectedDate by remember { mutableStateOf("") }
     val openDatePicker = remember { mutableStateOf(false) }
 
+
     val context = LocalContext.current
 
     // Función para abrir el DatePickerDialog
@@ -65,30 +66,32 @@ fun CitasScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Selector de Mascota
-        Box(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { expandedMascota = true }
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
-            Text(
-                text = selectedMascota?.nombre ?: "Selecciona una mascota",
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Box {
+                Text(
+                    text = selectedMascota?.nombre ?: "Selecciona una mascota",
+                    style = MaterialTheme.typography.bodyLarge
+                )
 
-            DropdownMenu(
-                expanded = expandedMascota,
-                onDismissRequest = { expandedMascota = false },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                listaMascotas.forEach { mascota ->
-                    DropdownMenuItem(
-                        text = { Text(mascota.nombre) },
-                        onClick = {
-                            selectedMascota = mascota
-                            expandedMascota = false
-                        }
-                    )
+                DropdownMenu(
+                    expanded = expandedMascota,
+                    onDismissRequest = { expandedMascota = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    listaMascotas.forEach { mascota ->
+                        DropdownMenuItem(
+                            text = { Text(mascota.nombre) },
+                            onClick = {
+                                selectedMascota = mascota
+                                expandedMascota = false
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -96,30 +99,31 @@ fun CitasScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Selector de Servicio
-        Box(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expandedServicio = true }
-                .padding(8.dp)
+                .clickable { expandedServicio = true },
         ) {
-            Text(
-                text = selectedServicio?.nombre ?: "Selecciona un servicio",
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Box {
+                Text(
+                    text = selectedServicio?.nombre ?: "Selecciona un servicio",
+                    style = MaterialTheme.typography.bodyLarge
+                )
 
-            DropdownMenu(
-                expanded = expandedServicio,
-                onDismissRequest = { expandedServicio = false },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                listaServicios.forEach { servicio ->
-                    DropdownMenuItem(
-                        text = { Text(servicio.nombre) },
-                        onClick = {
-                            selectedServicio = servicio
-                            expandedServicio = false
-                        }
-                    )
+                DropdownMenu(
+                    expanded = expandedServicio,
+                    onDismissRequest = { expandedServicio = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    listaServicios.forEach { servicio ->
+                        DropdownMenuItem(
+                            text = { Text(servicio.nombre) },
+                            onClick = {
+                                selectedServicio = servicio
+                                expandedServicio = false
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -127,16 +131,18 @@ fun CitasScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Selector de fecha
-        Box(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { openDatePicker.value = true }
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
-            Text(
-                text = if (selectedDate.isNotEmpty()) selectedDate else "Selecciona una fecha",
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Box {
+                Text(
+                    text = if (selectedDate.isNotEmpty()) selectedDate else "Selecciona una fecha",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -148,14 +154,16 @@ fun CitasScreen(
                     citaRepository.agregarCita(
                         Cita(
                             id = citas.size + 1,
-                            mascotaId = selectedMascota!!.id,
+                            mascota = selectedMascota!!.nombre,
                             fecha = selectedDate,
                             motivo = selectedServicio!!.nombre // Usamos el nombre del servicio como motivo
                         )
+
                     )
                     selectedServicio = null
                     selectedMascota = null
                     selectedDate = ""
+
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -168,11 +176,18 @@ fun CitasScreen(
         // Lista de citas
         LazyColumn {
             items(citas) { cita ->
-                Text(
-                    text = "Mascota ID: ${cita.mascotaId} - Fecha: ${cita.fecha} - Motivo: ${cita.motivo}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Mascota: ${cita.mascota} - Fecha: ${cita.fecha} - Motivo: ${cita.motivo}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
             }
         }
     }
