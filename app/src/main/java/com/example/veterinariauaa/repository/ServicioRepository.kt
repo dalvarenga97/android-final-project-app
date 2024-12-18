@@ -13,4 +13,8 @@ class ServicioRepository {
     )
 
     fun getServicios(): Flow<List<Servicio>> = servicios
+
+    fun agregarServicio(servicio: Servicio) {
+        servicios.value = servicios.value + servicio
+    }
 }
