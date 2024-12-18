@@ -15,6 +15,10 @@ import com.example.veterinariauaa.repository.MascotaRepository
 fun MascotasScreen(navController: NavController, mascotaRepository: MascotaRepository) {
     val mascotas by mascotaRepository.getMascotas().collectAsState(initial = emptyList())
     var newMascotaName by remember { mutableStateOf("") }
+    var newMascotaEspecie by remember { mutableStateOf("") }
+    var newMascotaRaza by remember { mutableStateOf("") }
+    var newMascotaEdad by remember { mutableStateOf("") }
+    var newMascotaPeso by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -36,26 +40,63 @@ fun MascotasScreen(navController: NavController, mascotaRepository: MascotaRepos
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
+
         TextField(
             value = newMascotaName,
             onValueChange = { newMascotaName = it },
             label = { Text("Nombre de la nueva mascota") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        TextField(
+            value = newMascotaEspecie,
+            onValueChange = { newMascotaEspecie = it },
+            label = { Text("Especie") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        TextField(
+            value = newMascotaRaza,
+            onValueChange = { newMascotaRaza = it },
+            label = { Text("Raza") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        TextField(
+            value = newMascotaEdad,
+            onValueChange = { newMascotaEdad = it },
+            label = { Text("Edad (años)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        TextField(
+            value = newMascotaPeso,
+            onValueChange = { newMascotaPeso = it },
+            label = { Text("Peso (kg)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Button(
             onClick = {
-                if (newMascotaName.isNotBlank()) {
+                if (newMascotaName.isNotBlank() && newMascotaEspecie.isNotBlank() &&
+                    newMascotaRaza.isNotBlank() && newMascotaEdad.isNotBlank() &&
+                    newMascotaPeso.isNotBlank()) {
+
                     mascotaRepository.agregarMascota(
                         Mascota(
                             id = mascotas.size + 1,
                             nombre = newMascotaName,
-                            especie = "Perro",
-                            raza = "Mezcla",
-                            edad = 2,
-                            peso = 12.5f
+                            especie = newMascotaEspecie,
+                            raza = newMascotaRaza,
+                            edad = newMascotaEdad.toInt(),
+                            peso = newMascotaPeso.toFloat()
                         )
                     )
                     newMascotaName = ""
+                    newMascotaEspecie = ""
+                    newMascotaRaza = ""
+                    newMascotaEdad = ""
+                    newMascotaPeso = ""
                 }
             },
             modifier = Modifier.fillMaxWidth()
