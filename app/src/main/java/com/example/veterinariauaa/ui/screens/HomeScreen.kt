@@ -14,10 +14,10 @@ import androidx.navigation.NavController
 @Composable
 fun HomeScreen(navController: NavController) {
     val options = listOf(
-        Pair("Gestión de Mascotas") { navController.navigate("mascotas") },
-        Pair("Citas Médicas") { navController.navigate("citas") },
-        Pair("Servicios") { navController.navigate("servicios") },
-        Pair("Perfil") { navController.navigate("perfil") }
+        Pair("Gestión de Mascotas") { navController.navigate("pets") },
+        Pair("Citas Médicas") { navController.navigate("appointments") },
+        Pair("Servicios") { navController.navigate("services") },
+        Pair("Perfil") { navController.navigate("profile") }
     )
 
     Box(

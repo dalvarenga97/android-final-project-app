@@ -1,24 +1,40 @@
 package com.example.veterinariauaa.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.veterinariauaa.repository.ServicioRepository
+import com.example.veterinariauaa.data.DefaultAppContainer
+import com.example.veterinariauaa.data.ServicesRepository
+import com.example.veterinariauaa.model.Service
+
+// Function to retrieve the access token
+private fun getAccessToken(context: Context): String? {
+    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    return sharedPreferences.getString("access_token", null)
+}
 
 @Composable
-fun ServiciosScreen(servicioRepository: ServicioRepository) {
-    val servicios by servicioRepository.getServicios().collectAsState(initial = emptyList())
+fun ServicesScreen(servicesRepository: ServicesRepository) {
+    val context = LocalContext.current
+    val access_token = remember { getAccessToken(context) }
+    val servicesRepository: ServicesRepository = DefaultAppContainer().servicesRepository
+    var services by remember { mutableStateOf(listOf<Service>()) }
 
-    var newServicioName by remember { mutableStateOf("") }
-    var newServicioDescripcion by remember { mutableStateOf("") }
-    var newServicioPrecio by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        services = servicesRepository.getServices("Bearer $access_token")
+    }
+
+    var newServiceName by remember { mutableStateOf("") }
+    var newServiceDescripcion by remember { mutableStateOf("") }
+    var newServicePrecio by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         // Sección de carga de servicios
@@ -35,26 +51,26 @@ fun ServiciosScreen(servicioRepository: ServicioRepository) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 TextField(
-                    value = newServicioName,
-                    onValueChange = { newServicioName = it },
+                    value = newServiceName,
+                    onValueChange = { newServiceName = it },
                     label = { Text("Nombre del servicio") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 TextField(
-                    value = newServicioDescripcion,
-                    onValueChange = { newServicioDescripcion = it },
+                    value = newServiceDescripcion,
+                    onValueChange = { newServiceDescripcion = it },
                     label = { Text("Descripcion") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 TextField(
-                    value = newServicioPrecio,
-                    onValueChange = { newServicioPrecio = it },
+                    value = newServicePrecio,
+                    onValueChange = { newServicePrecio = it },
                     label = { Text("Precio") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+
                 Button(
                     onClick = {
                         // ... Lógica para agregar servicio
@@ -69,30 +85,24 @@ fun ServiciosScreen(servicioRepository: ServicioRepository) {
         // Sección de lista de servicios
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow {
-            items(servicios) { servicio ->
+            items(services) { service ->
                 Card(
                     modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .width(300.dp) // Aumenta el ancho de la tarjeta
+                        .height(200.dp) // Aumenta la altura de la tarjeta
+                        .background(color = Color.LightGray),
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        Text(text = service.name, style = MaterialTheme.typography.bodyLarge)
+                        Text(text = service.description, style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            text = servicio.nombre,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            text = servicio.descripcion,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Text(
-                            text = "${servicio.precio} Gs.",
+                            text = "Precio: ${service.price} GS",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
             }
         }
-
     }
 }

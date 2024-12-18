@@ -1,9 +1,11 @@
 package com.example.veterinariauaa.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -23,6 +25,7 @@ fun LoginScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     val authRepository: AuthRepository = DefaultAppContainer().authRepository
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -64,17 +67,32 @@ fun LoginScreen(navController: NavController) {
                     errorMessage = "Por favor, completa todos los campos"
                 } else {
                     errorMessage = ""
+                    // Launch a coroutine to handle the login process
                     CoroutineScope(Dispatchers.IO).launch {
+                        val user = User(username, password)
+                        val response: LoginResponse? // Declare response outside try-catch
                         try {
-                            val user = User(username, password)
-                            val response: LoginResponse = authRepository.login(user)
-                            withContext(Dispatchers.Main) {
-                                navController.navigate("home")
-                            }
+                            response = authRepository.login(user) // Move this inside try
                         } catch (e: Exception) {
+                            // Update the error message on the main thread
                             withContext(Dispatchers.Main) {
                                 errorMessage = "Error de inicio de sesión: ${e.message}"
                             }
+                            return@launch // Exit the coroutine if there's an error
+                        }
+                        
+                        // Check if the response is null or access_token is missing
+                        if (response == null || response.access_token.isEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                errorMessage = "Error de inicio de sesión: Token de acceso no recibido"
+                            }
+                            return@launch // Exit the coroutine if there's an error
+                        }
+                        
+                        // Store the access token securely on the main thread
+                        withContext(Dispatchers.Main) {
+                            storeAccessToken(response.access_token, context)
+                            navController.navigate("home")
                         }
                     }
                 }
@@ -83,5 +101,14 @@ fun LoginScreen(navController: NavController) {
         ) {
             Text("Ingresar")
         }
+    }
+}
+
+// Function to store the access token securely
+private fun storeAccessToken(token: String, context: Context) {
+    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    with(sharedPreferences.edit()) {
+        putString("access_token", token)
+        apply()
     }
 }
