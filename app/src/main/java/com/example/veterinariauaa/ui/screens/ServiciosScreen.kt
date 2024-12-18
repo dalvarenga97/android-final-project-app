@@ -2,6 +2,7 @@ package com.example.veterinariauaa.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -53,7 +54,7 @@ fun ServiciosScreen(servicioRepository: ServicioRepository) {
                     label = { Text("Precio") },
                     modifier = Modifier.fillMaxWidth()
                 )
-
+                Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
                         // ... Lógica para agregar servicio
@@ -71,21 +72,27 @@ fun ServiciosScreen(servicioRepository: ServicioRepository) {
             items(servicios) { servicio ->
                 Card(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .width(300.dp) // Aumenta el ancho de la tarjeta
-                        .height(200.dp) // Aumenta la altura de la tarjeta
-                        .background(color = Color.LightGray),
+                        .height(200.dp)
+                        .fillMaxWidth()
+                        .padding(8.dp),
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = servicio.nombre, style = MaterialTheme.typography.bodyLarge)
-                        Text(text = servicio.descripcion, style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            text = "Precio: ${servicio.precio} GS",
+                            text = servicio.nombre,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = servicio.descripcion,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            text = "${servicio.precio} Gs.",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
             }
         }
+
     }
 }

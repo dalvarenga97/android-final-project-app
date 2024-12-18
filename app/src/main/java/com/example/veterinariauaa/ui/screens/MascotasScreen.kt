@@ -103,26 +103,30 @@ fun MascotasScreen(navController: NavController, mascotaRepository: MascotaRepos
 
     // Sección de lista de mascotas
     Spacer(modifier = Modifier.height(16.dp))
-    LazyRow {
-        items(mascotas) { mascota ->
-            Card(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .width(300.dp) // Aumenta el ancho de la tarjeta
-                    .height(150.dp) // Aumenta la altura de la tarjeta
-                    .background(color = Color.LightGray),
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = mascota.nombre, style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        text = "${mascota.especie} (${mascota.raza}) - ${mascota.edad} años",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(text = "Peso: ${mascota.peso} kg", style = MaterialTheme.typography.bodyMedium)
+        LazyRow {
+            items(mascotas) { mascota ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = mascota.nombre,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "${mascota.especie} (${mascota.raza}) - ${mascota.edad} años",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            "${mascota.peso} kg",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             }
         }
-    }
-    Spacer(modifier = Modifier.height(16.dp))
 }
 }

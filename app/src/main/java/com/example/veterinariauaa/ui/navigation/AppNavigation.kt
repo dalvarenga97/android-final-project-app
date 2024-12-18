@@ -21,7 +21,7 @@ fun AppNavigation(
     citaRepository: CitaRepository,
     servicioRepository: ServicioRepository
 ) {
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "home") {
         composable("login") { LoginScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("mascotas") { MascotasScreen(navController, mascotaRepository) }

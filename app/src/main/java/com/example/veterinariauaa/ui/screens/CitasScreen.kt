@@ -31,7 +31,6 @@ fun CitasScreen(
     var selectedDate by remember { mutableStateOf("") }
     val openDatePicker = remember { mutableStateOf(false) }
 
-
     val context = LocalContext.current
 
     // Función para abrir el DatePickerDialog
@@ -65,85 +64,118 @@ fun CitasScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Selector de Mascota
+        // Container card for selection sections
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expandedMascota = true }
-                .padding(8.dp),
         ) {
-            Box {
-                Text(
-                    text = selectedMascota?.nombre ?: "Selecciona una mascota",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            Column(modifier = Modifier.padding(16.dp)) {
 
-                DropdownMenu(
-                    expanded = expandedMascota,
-                    onDismissRequest = { expandedMascota = false },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    listaMascotas.forEach { mascota ->
-                        DropdownMenuItem(
-                            text = { Text(mascota.nombre) },
-                            onClick = {
-                                selectedMascota = mascota
-                                expandedMascota = false
+                // Selector de Mascota
+                Text(
+                    text = "Mascota:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Column {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { expandedMascota = true }
+                            .padding(8.dp),
+                    ) {
+                        Box {
+                            Text(
+                                text = selectedMascota?.nombre ?: "Selecciona una mascota",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+
+                            DropdownMenu(
+                                expanded = expandedMascota,
+                                onDismissRequest = { expandedMascota = false },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                listaMascotas.forEach { mascota ->
+                                    DropdownMenuItem(
+                                        text = { Text(mascota.nombre) },
+                                        onClick = {
+                                            selectedMascota = mascota
+                                            expandedMascota = false
+                                        }
+                                    )
+                                }
                             }
-                        )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Selector de Servicio
+                Text(
+                    text = "Servicio:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Column {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { expandedServicio = true }
+                            .padding(8.dp),
+                    ){
+                        Box {
+                            Text(
+                                text = selectedServicio?.nombre ?: "Selecciona un servicio",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+
+                    DropdownMenu(
+                        expanded = expandedServicio,
+                        onDismissRequest = { expandedServicio = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        listaServicios.forEach { servicio ->
+                            DropdownMenuItem(
+                                text = { Text(servicio.nombre) },
+                                onClick = {
+                                    selectedServicio = servicio
+                                    expandedServicio = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Selector de fecha
+                Text(
+                    text = "Fecha:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Column {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { openDatePicker.value = true }
+                            .padding(8.dp),
+                    ){
+                        Box {
+                            Text(
+                                text = if (selectedDate.isNotEmpty()) selectedDate else "Selecciona una fecha",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
 
-        // Selector de Servicio
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expandedServicio = true },
-        ) {
-            Box {
-                Text(
-                    text = selectedServicio?.nombre ?: "Selecciona un servicio",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-
-                DropdownMenu(
-                    expanded = expandedServicio,
-                    onDismissRequest = { expandedServicio = false },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    listaServicios.forEach { servicio ->
-                        DropdownMenuItem(
-                            text = { Text(servicio.nombre) },
-                            onClick = {
-                                selectedServicio = servicio
-                                expandedServicio = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Selector de fecha
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { openDatePicker.value = true }
-                .padding(8.dp),
-        ) {
-            Box {
-                Text(
-                    text = if (selectedDate.isNotEmpty()) selectedDate else "Selecciona una fecha",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -158,12 +190,10 @@ fun CitasScreen(
                             fecha = selectedDate,
                             motivo = selectedServicio!!.nombre // Usamos el nombre del servicio como motivo
                         )
-
                     )
                     selectedServicio = null
                     selectedMascota = null
                     selectedDate = ""
-
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -183,8 +213,16 @@ fun CitasScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Mascota: ${cita.mascota} - Fecha: ${cita.fecha} - Motivo: ${cita.motivo}",
+                            text = cita.mascota,
                             style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = cita.fecha,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            text = cita.motivo,
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
